@@ -76,9 +76,10 @@ app.get("/listings/:id/edit", async (req, res) => {
 //update route
 app.put("/listings/:id", async (req, res) => {
   let { id } = req.params;
-  const listingData = req.body.listing; //...= deconstruct
-  res.redirect(`/listings/${id}`)
-})
+  const listingData = req.body.listing;
+  await Listing.findByIdAndUpdate(id, listingData, { runValidators: true, new: true });
+  res.redirect(`/listings/${id}`);
+});
 
 //Delete Route
 app.delete("/listings/:id", async (req, res) => {
