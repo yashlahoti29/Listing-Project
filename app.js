@@ -61,9 +61,13 @@ app.get("/listings/:id", async (req, res) => {
 
 //create route
 app.post("/listings", async (req, res) => {
-  const newListing = new Listing(req.body.listing);
+  try{
+    const newListing = new Listing(req.body.listing);
   await newListing.save();
   res.redirect("/listings");
+  }catch(err){
+    next(err);
+  }
 });
 
 //Edit Route
@@ -88,6 +92,12 @@ app.delete("/listings/:id", async (req, res) => {
   //console.log(deletedListing);
   res.redirect("/listings");
 });
+
+app.use((err, req, res, next) => {
+    let {statusCode=500, message="something went wrong"} = err;
+    res.status(statusCode).send(message);
+}); 
+
 
 app.listen(8080, ()=> {
     console.log('server listening');
