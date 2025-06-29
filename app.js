@@ -9,6 +9,8 @@ const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
 const Joi = require('joi');
 const {listingSchema} = require("./schema.js")
+const Review= require("./models/review.js")
+
 
 
 app.set("view engine", "ejs");
@@ -107,13 +109,25 @@ app.delete("/listings/:id", wrapAsync(async (req, res) => {
   res.redirect("/listings");
 }));
 
+//reviews
+app.post("/listings/:id/reviews", async(req, res)=>{
+  let listing=await Listing.findById(req.params.id);
+  let newReview = new Review(req.body.review);
+
+  listing.reviews.push(newReview);
+  await newReview.save();
+  await listing.save();
+
+  res.redirect()
+})
+
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page not found!!"));
 });
 
 app.use((err, req, res, next) => {
     let {statusCode=500, message="something went wrong"} = err;
-    res.status(statusCode).render("error.ejs", { message })
+    res.status(statusCode).render("error.ejs", { err })
 }); 
 
 
