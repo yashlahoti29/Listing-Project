@@ -13,6 +13,7 @@ const Review= require("./models/review.js")
 const router = express.Router();
 
 const listings= require("./routes/listing.js");
+const reviews= require("./routes/review.js");
 
 
 app.set("view engine", "ejs");
@@ -23,25 +24,6 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")))
 
 
-const validateListing= (req, res, next)=>{
-  let {error}=listingSchema.validate(req.body);
-  if(error){
-    let errMsg= error.details.map((el)=> el.message).join(",")
-    throw new ExpressError(400, errMsg)
-  } else{
-    next();
-  }
-}
-
-const validateReview= (req, res, next)=>{
-  let {error}=reviewSchema.validate(req.body);
-  if(error){
-    let errMsg= error.details.map((el)=> el.message).join(",")
-    throw new ExpressError(400, errMsg)
-  } else{
-    next();
-  }
-}
 
 
 const MONGO_URL = 'mongodb://127.0.0.1:27017/wanderlust';
@@ -58,43 +40,9 @@ app.get("/", (req, res)=>{
     res.send("root is working");
 })
 
-// app.get("/testListing", async(req,res)=>{
-//     let sample=new Listing({
-//         title:"My home",
-//         description:"by beach",
-//         price: 1222,
-//         location:"Pune",
-//         country:"India",
-//     });
-//     await sample.save();
-//     res.send("success")
-// })
 
 app.use("/listings", listings)
-
-//reviews
-app.post("/listings/:id/reviews", validateReview, wrapAsync(async(req, res)=>{
-  let listing=await Listing.findById(req.params.id);
-  let newReview = new Review(req.body.review);
-
-  listing.reviews.push(newReview);
-  await newReview.save();
-  await listing.save();
-
-  res.redirect("/listings")
-}))
-
-//delete reviews
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
-  let {id, reviewId } = req.params;
-  //Remove review reference from Listing.reviews array
-  await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-
-  // Delete the actual Review document
-  await Review.findByIdAndDelete(reviewId);
-  res.redirect(`/listings/${id}`);
-
-}));
+app.use("/listings/:id/reviews", reviews)
 
 
 app.all("*", (req, res, next) => {
