@@ -10,8 +10,9 @@ const ExpressError = require("./utils/ExpressError.js");
 const Joi = require('joi');
 const {listingSchema, reviewSchema} = require("./schema.js");
 const Review= require("./models/review.js")
+const router = express.Router();
 
-
+const listings= require("./routes/listing.js");
 
 
 app.set("view engine", "ejs");
@@ -69,56 +70,7 @@ app.get("/", (req, res)=>{
 //     res.send("success")
 // })
 
-//Index Route
-app.get("/listings", wrapAsync(async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
-}));
-
-//New Route (new show ke pehle likha cause show new ke "/new" ko id samajh raha hai)
-app.get("/listings/new", (req, res) => {
-  res.render("listings/new.ejs");
-});
-
-//show route
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id).populate("reviews");
-  res.render("listings/show.ejs", { listing });
-}));
-
-//create route
-app.post("/listings", validateListing,
-  wrapAsync(async (req, res) => {
-  
-  const newListing = new Listing(req.body.listing);
-  await newListing.save();
-  res.redirect("/listings");
-  
-}));
-
-//Edit Route
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listing = await Listing.findById(id);
-  res.render("listings/edit.ejs", { listing });
-}));
-
-//update route
-app.put("/listings/:id", validateListing, wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  const listingData = req.body.listing;
-  await Listing.findByIdAndUpdate(id, listingData, { runValidators: true, new: true });
-  res.redirect(`/listings/${id}`);
-}));
-
-//Delete Route
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-  let { id } = req.params;
-  let deletedListing = await Listing.findByIdAndDelete(id);
-  //console.log(deletedListing);
-  res.redirect("/listings/:id");
-}));
+app.use("/listings", listings)
 
 //reviews
 app.post("/listings/:id/reviews", validateReview, wrapAsync(async(req, res)=>{
