@@ -27,7 +27,8 @@ router.post("/", validateReview, wrapAsync(async(req, res)=>{
   await newReview.save();
   await listing.save();
 
-  res.redirect("/listings")
+  //res.redirect("/listings/")
+  res.redirect(`/listings/${listing._id}`);
 }))
 
 //delete reviews
