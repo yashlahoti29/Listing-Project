@@ -11,6 +11,7 @@ const Joi = require('joi');
 const {listingSchema, reviewSchema} = require("./schema.js");
 //const Review= require("./models/review.js")
 //const router = express.Router();
+const flash = require("connect-flash");
 
 
 const listings= require("./routes/listing.js");
@@ -43,6 +44,7 @@ app.get("/", (req, res)=>{
 
 app.use("/listings", listings)
 app.use("/listings/:id/reviews", reviews)
+const flash = require("connect-flash");
 
 
 app.all("*", (req, res, next) => {
