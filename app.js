@@ -13,7 +13,9 @@ const {listingSchema, reviewSchema} = require("./schema.js");
 //const router = express.Router();
 const session = require("express-session");
 const flash = require("connect-flash");
-
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User= require("./models/user.js");
 
 const listings= require("./routes/listing.js");
 const reviews= require("./routes/review.js");
@@ -59,6 +61,14 @@ app.get("/", (req, res)=>{
 
 app.use(session(sessionOption));
 app.use(flash());
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
