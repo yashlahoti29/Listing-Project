@@ -25,6 +25,10 @@ router.get("/", wrapAsync(async (req, res) => {
 
 //New Route (new show ke pehle likha cause show new ke "/new" ko id samajh raha hai)
 router.get("/new", (req, res) => {
+  if(!req.isAuthenticated()){
+    req.flash("error", "You're not logged in to create a listing!")
+    return res.redirect("/login");
+  }
   res.render("listings/new.ejs");
 });
 
