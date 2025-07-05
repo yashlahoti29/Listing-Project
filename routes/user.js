@@ -13,11 +13,11 @@ router.get("/signup",(req, res)=>{
 
 router.post("/signup", wrapAsync(async (req, res)=>{
     try{
-       let {username, email, password}= req.body;
-    const newUser= new User({email, username})
-    await User.register(newUser, password)
-    req.flash('success', "Welcome to Wanderlust!")
-    res.redirect("/listings"); 
+        let {username, email, password}= req.body;
+        const newUser= new User({email, username})
+        await User.register(newUser, password)
+        req.flash('success', "Welcome to Wanderlust!")
+        res.redirect("/listings"); 
     }
     catch(err){
         req.flash('error', err.message);
@@ -38,6 +38,14 @@ router.post("/login",
     res.redirect("/listings")
 })
 
-
+router.get("/logout",(req, res, next)=>{
+    req.logOut((err)=>{
+        if(err){
+          return next(err)
+        }
+        req.flash("success", "You're Logged out!");
+        res.redirect("/listings");
+    })
+} );
 
 module.exports = router;
