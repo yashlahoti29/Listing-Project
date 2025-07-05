@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { ref } = require("process");
 const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
@@ -11,6 +12,10 @@ const reviewSchema = new Schema({
     createAt: {
         type: Date,
         default: Date.now()
+    },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref:"User"
     }
 });
  
