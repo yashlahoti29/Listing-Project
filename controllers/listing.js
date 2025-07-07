@@ -31,6 +31,9 @@ module.exports.showListing = async (req, res) => {
 //create route
 module.exports.createListing = async (req, res) => {
   const newListing = new Listing(req.body.listing);
+  if (req.file) {
+    newListing.image = { url: req.file.path, filename: req.file.filename }; // Cloudinary image data
+  }
   newListing.owner = req.user._id;
   await newListing.save();
   req.flash("success", "New Listing Created")
@@ -45,14 +48,24 @@ module.exports.renderEditForm= async (req, res) => {
     req.flash("error", "Listing does not exist")
     res.redirect(`/listings/${id}`)
   }
-  res.render("listings/edit.ejs", { listing });
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace("/upload", "/upload/h_150,w_250");
+
+  res.render("listings/edit.ejs", { listing, originalImageUrl });
 }
 
 //update
 module.exports.updateListing = async (req, res) => {
   let { id } = req.params;
-  const listingData = req.body.listing;
-  await Listing.findByIdAndUpdate(id, listingData, { runValidators: true, new: true });
+  let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
+  if (typeof req.file !== undefined) {
+    let url = req.file.path;
+    let filename = req.file.filename;
+    listing.image = { url, filename };
+    await listing.save();
+  }
+
   req.flash("success", "Listing Updated")
   res.redirect(`/listings/${id}`);
 }

@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV!='production'){
+  require('dotenv').config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose= require("mongoose");
@@ -16,6 +20,8 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const User= require("./models/user.js");
+const multer = require("multer");
+const upload = multer({dest:'uploads/'})
 
 const listingRouter= require("./routes/listing.js");
 const reviewRouter= require("./routes/review.js");
@@ -74,7 +80,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
-    res.locals.currUser = req.user; //stores curr user info
+    res.locals.currUser = req.user;//stores curr user info
   
     next();
   });
