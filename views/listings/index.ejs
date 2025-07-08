@@ -57,7 +57,7 @@
       </div>
       <div class="filter">
         <div><i class="fa-solid fa-mountain"></i></div>
-        <p>Mountain</p>
+        <p>Mountains</p>
       </div>
       <div class="filter">
         <div><i class="fa-brands fa-fort-awesome"></i></div>
@@ -74,7 +74,7 @@
       </div>
       <div class="filter">
         <div><i class="fa-solid fa-cow"></i></div>
-        <p>Farm</p>
+        <p>Farms</p>
       </div>
       <div class="filter">
         <div><i class="fa-solid fa-snowflake"></i></div>
@@ -96,9 +96,8 @@
             role="switch"
             id="flexSwitchCheckDefault"
           />
-          <label class="form-check-label" for="flexSwitchCheckDefault"
-            >Display total after taxes</label
-          >
+          <label class="form-check-label" for="flexSwitchCheckDefault">
+            Display total after taxes</label>
         </div>
       </div>
     </div>
@@ -128,4 +127,19 @@
     <% } %>
   </div>
 </body>
+
+<!-- logic for display after taxes -->
+<script>
+  let taxSwitch = document.getElementById("flexSwitchCheckDefault");
+  taxSwitch.addEventListener("click", () => {
+    let taxInfo = document.getElementsByClassName("tax-info");
+    for (info of taxInfo) {
+      if (info.style.display != "inline") {
+        info.style.display = "inline";
+      } else {
+        info.style.display = "none";
+      }
+    }
+  });
+</script>
 
